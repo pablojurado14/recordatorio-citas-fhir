@@ -24,11 +24,12 @@ DESTINO = os.environ.get("WHATSAPP_DESTINO")  # mi propio número: nunca se escr
 
 def obtener_citas(cuantas):
     """Pide al servidor FHIR las citas confirmadas y devuelve la lista de recursos Appointment."""
+    ahora = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")  # fecha y hora actuales, no solo el día
     respuesta = requests.get(
         f"{FHIR_BASE}/Appointment",
         params={
             "status": "booked",
-            "date": f"ge{date.today().isoformat()}",  # solo citas de hoy en adelante ("ge" = mayor o igual)
+            "date": f"ge{ahora}",  # solo citas desde este momento ("ge" = mayor o igual)
             "_sort": "date",                           # las más próximas primero
             "_count": cuantas,
         },
